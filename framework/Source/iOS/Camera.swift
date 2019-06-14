@@ -141,7 +141,7 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
     
     var captureSessionRestartAttempts = 0
 
-    public init(sessionPreset:AVCaptureSession.Preset, cameraDevice:AVCaptureDevice? = nil, location:PhysicalCameraLocation = .backFacing, captureAsYUV:Bool = true, photoOutput: AVCapturePhotoOutput? = nil, metadataDelegate: AVCaptureMetadataOutputObjectsDelegate? = nil) throws {
+    public init(sessionPreset:AVCaptureSession.Preset, cameraDevice:AVCaptureDevice? = nil, location:PhysicalCameraLocation = .backFacing, captureAsYUV:Bool = true, photoOutput: AVCapturePhotoOutput? = nil, metadataDelegate: AVCaptureMetadataOutputObjectsDelegate? = nil, metadataObjectTypes: [AVMetadataObject.ObjectType]? = nil) throws {
 
         debugPrint("camera init")
         
@@ -216,13 +216,13 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
             }
         }
         
-        if let metadataDelegate = metadataDelegate {
+        if let metadataDelegate = metadataDelegate, let metadataObjectTypes = metadataObjectTypes, !metadataObjectTypes.isEmpty {
             let captureMetadataOutput = AVCaptureMetadataOutput()
             if captureSession.canAddOutput(captureMetadataOutput) {
                 captureSession.addOutput(captureMetadataOutput)
                 
                 captureMetadataOutput.setMetadataObjectsDelegate(metadataDelegate, queue: cameraProcessingQueue)
-                captureMetadataOutput.metadataObjectTypes = [AVMetadataObject.ObjectType.qr]
+                captureMetadataOutput.metadataObjectTypes = metadataObjectTypes
             }
         }
         
